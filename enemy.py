@@ -10,8 +10,8 @@ class Zombie_manager():
     zombies = []
 
     def __init__(self):
-        for number in range(10):
-            temp = Zombie(vec2d(700, 20 * number))
+        for number in range(6):
+            temp = Zombie(vec2d(700, 40 * number))
             self.zombies.append(temp)
 
     def update(self, player):
@@ -24,9 +24,8 @@ class Zombie_manager():
         if not dead_enemy == None:
             self.zombies.remove(dead_enemy)
 
-
-
 class Zombie():
+
     health = 200
     pos = vec2d(100, 100)
     direction = vec2d(0, 0)
@@ -55,5 +54,5 @@ class Zombie():
 
     def draw(self, screen, focus):
         pygame.draw.circle(screen, (250 - self.health//3, 50 + self.health//3, 0), 
-                        (int(self.pos[0]) - focus[0], int(self.pos[1]) - focus[1]), 
+                        (int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1])), 
                         10)

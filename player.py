@@ -11,7 +11,7 @@ class Player():
     direction = vec2d(0, 0)
 
     def __init__(self):
-        pass
+        self.hud = pygame.image.load("assets/player/hud.png")
 
     def update(self, input_list):
         self.direction = vec2d(0, 0)
@@ -29,11 +29,12 @@ class Player():
             self.pos += self.direction  
 
     def draw(self, screen, mouse_pos, focus):
+        screen.blit(self.hud, (int(self.pos[0] - focus[0] - 49), int(self.pos[1] - focus[1] - 49)))
         pygame.draw.circle(screen, (0, 0, 0), 
-                        (int(self.pos[0]) - focus[0], int(self.pos[1]) - focus[1]), 
+                        (int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1])), 
                         10)
         gun_dir = self.pos - mouse_pos
         gun_dir.length = 15
         pygame.draw.line( screen, (110, 110, 110), 
-                        (int(self.pos[0]) - focus[0], int(self.pos[1]) - focus[1]), 
-                        (int(self.pos[0] - gun_dir[0]) - focus[0], int(self.pos[1] - gun_dir[1]) - focus[1]), 2)
+                        (int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1])), 
+                        (int(self.pos[0] - gun_dir[0] - focus[0]), int(self.pos[1] - gun_dir[1] - focus[1])), 2)
