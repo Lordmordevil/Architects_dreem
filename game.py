@@ -7,7 +7,7 @@ from random import uniform
 
 from player import Player
 from projectiles import Bullet
-from enemy import Zombie
+from enemy import Zombie_manager
 
 def debug_static_map(screen, focus, screen_width, screen_height):
         def draw_colmn(x_pos, height, screen):
@@ -29,6 +29,7 @@ def debug_static_map(screen, focus, screen_width, screen_height):
         for row in range(height_line_count + 1):
             draw_row(offset[1] + row * box_size, screen_width, screen)
 
+
 class Starter(PygameHelper):
 
     focus = vec2d(0, 0)
@@ -37,17 +38,14 @@ class Starter(PygameHelper):
     mouse_pos = vec2d(0, 0)
 
     bullets = []
-    enemys = []
+
+    zombies = Zombie_manager()
 
     def __init__(self):
         self.w, self.h = 800, 600
         PygameHelper.__init__(self, size=(self.w, self.h), fill=((255,255,255)))
 
         self.player = Player()
-
-        for number in range(10):
-            temp = Zombie(vec2d(700, 20 * number))
-            self.enemys.append(temp)
         
     def update(self):
         self.player.update(self.input_list)
@@ -55,20 +53,15 @@ class Starter(PygameHelper):
         dead_bullet = None
         for bullet in self.bullets:
             if bullet.life > 0:
-                bullet.update(self.enemys)
+                bullet.update(self.zombies.zombies)
             else:
                 dead_bullet = bullet
         if not dead_bullet == None:
             self.bullets.remove(dead_bullet)
 
-        dead_enemy = None
-        for enemy in self.enemys:
-            if enemy.health > 0:
-                enemy.update(self.player)
-            else:
-                dead_enemy = enemy
-        if not dead_enemy == None:
-            self.enemys.remove(dead_enemy)
+        self.zombies.update(self.player)
+
+        
 
 
     def keyUp(self, key):
@@ -109,7 +102,7 @@ class Starter(PygameHelper):
         for bullet in self.bullets:
             bullet.draw(self.screen, self.focus)
 
-        for enemy in self.enemys:
+        for enemy in self.zombies.zombies:
             enemy.draw(self.screen, self.focus)
 
         

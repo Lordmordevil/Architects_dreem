@@ -22,7 +22,7 @@ class Bullet():
             self.pos += self.direction
         for enemy in enemys:
             dist = self.pos - enemy.pos
-            if dist.length < 30:
+            if dist.length < 10:
                 self.life = 0
                 enemy.health -= 30
 
