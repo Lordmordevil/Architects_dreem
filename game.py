@@ -9,6 +9,7 @@ from player import Player
 from projectiles import Bullet, fire_bullets
 from enemy import Zombie_manager
 from debug_tools import debug_static_map
+from utils import *
 
 class Building():
     # to do
@@ -39,15 +40,8 @@ class Starter(PygameHelper):
         self.player.update(self.input_list, self.zombies.zombies)
         if self.player.health == 0:
             self.running = False
-        alt_player_pos = self.player.pos - self.focus
-        if alt_player_pos[0] > 700:
-            self.focus[0] += alt_player_pos[0] - 700
-        if alt_player_pos[1] > 500:
-            self.focus[1] += alt_player_pos[1] - 500
-        if alt_player_pos[0] < 100:
-            self.focus[0] -= 100 - alt_player_pos[0]
-        if alt_player_pos[1] < 100:
-            self.focus[1] -= 100 - alt_player_pos[1]
+            
+        update_focus(self.player.pos - self.focus, self.focus)
 
         dead_bullet = None
         for bullet in self.bullets:

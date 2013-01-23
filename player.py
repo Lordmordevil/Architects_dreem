@@ -14,6 +14,8 @@ class Player():
 
     health = 1000
 
+    max_health = 1000
+
     equipped_gun = 1
     clips = 10
     ammo = 10
@@ -51,10 +53,12 @@ class Player():
                         self.health = 0
                     else:
                         self.health -= 2
+                        if friend.health + 2 < friend.max_health:
+                            friend.health +=2
 
     def draw(self, screen, mouse_pos, focus):
         screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
-        screen.blit(self.hud, (int(screen_pos[0] - 49), int(screen_pos[1] - 49)))
+        #screen.blit(self.hud, (int(screen_pos[0] - 49), int(screen_pos[1] - 49)))
 
         pygame.draw.rect(screen, (120, 120, 255), (screen_pos[0] + 25, screen_pos[1] + 9, 4,int((-1) * self.ammo/(10/18))))
         pygame.draw.rect(screen, (0, 0, 0), (screen_pos[0] + 25, screen_pos[1] - 10, 4, 20), 1)
@@ -64,7 +68,7 @@ class Player():
                         (screen_pos[0] + 35, screen_pos[1] - 10 + clip * 2), 
                         (screen_pos[0] + 40, screen_pos[1] - 10 + clip * 2), 1)
 
-        pygame.draw.rect(screen, (0, 255, 0), (screen_pos[0] - 25, screen_pos[1] + 9, 4,int((-1) * self.health/(1000/18))))
+        pygame.draw.rect(screen, (0, 255, 0), (screen_pos[0] - 25, screen_pos[1] + 9, 4,int((-1) * self.health/(self.max_health/18))))
         pygame.draw.rect(screen, (0, 0, 0), (screen_pos[0] - 25, screen_pos[1] - 10, 4, 20), 1)
 
         gun_dir = self.pos - focus - mouse_pos

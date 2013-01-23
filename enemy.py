@@ -7,14 +7,28 @@ from random import uniform
 
 from utils import colider
 
+class Item():
+    pos = vec2d(0, 0)
+    tip = 1
+
+    def __init__(self, pos, tip):
+        self.pos = vec2d(pos)
+        self.tip = tip
+
+    def draw(self, screen, focus):
+        pass
+
 class Zombie_manager():
 
     zombies = []
 
     def __init__(self):
         for number in range(6):
-            temp = Zombie(vec2d(700, 40 * number))
-            self.zombies.append(temp)
+            self.add_zombie()
+
+    def add_zombie(self):
+        temp = Zombie(vec2d(int(uniform(0, 750)), int(uniform(0, 550))))
+        self.zombies.append(temp)
 
     def update(self, player):
         dead_enemy = None
@@ -26,14 +40,19 @@ class Zombie_manager():
         if not dead_enemy == None:
             self.zombies.remove(dead_enemy)
 
+            self.add_zombie()
+
 class Zombie():
 
     health = 200
+    max_health = 200
     pos = vec2d(100, 100)
     direction = vec2d(0, 0)
 
     def __init__(self, pos):
         self.pos = vec2d(pos)
+        self.sprite = pygame.image.load("assets/enemy/zombie.png")
+        self.base_sprite = self.sprite
 
 
     def update(self, player, friends):
@@ -46,6 +65,14 @@ class Zombie():
                 colider(self, friend)
 
     def draw(self, screen, focus):
-        pygame.draw.circle(screen, (250 - self.health//3, 50 + self.health//3, 0), 
-                        (int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1])), 
-                        10)
+        screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
+
+        pygame.draw.line(screen, (0, 0, 0), screen_pos, (screen_pos[0] + 15, screen_pos[1] - 10))
+
+        pygame.draw.rect(screen, (255, 70, 70), (screen_pos[0] + 15, screen_pos[1] + 9, 4,int((-1) * self.health/(self.max_health/18))))
+        pygame.draw.rect(screen, (0, 0, 0), (screen_pos[0] + 15, screen_pos[1] - 10, 4, 20), 1)
+
+        rotation = - self.direction
+        self.sprite = pygame.transform.rotate(self.base_sprite, int( 270 - rotation.get_angle()))
+        sprite_size = self.sprite.get_size()
+        screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)))
