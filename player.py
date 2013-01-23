@@ -30,7 +30,18 @@ class Player():
             self.clips -= 1
             self.ammo = 10
 
-    def update(self, input_list, friends):
+    def zombie_interaction(self, friend):
+        colider(self, friend)
+        dist = self.pos.get_distance(friend.pos)
+        if dist < 23 and self.health > 0:
+            if self.health < 2:
+                self.health = 0
+            else:
+                self.health -= 2
+                if friend.health + 2 < friend.max_health:
+                    friend.health +=2
+
+    def update(self, input_list, friends, items):
         self.direction = vec2d(0, 0)
 
         if input_list["W"]:
@@ -46,15 +57,13 @@ class Player():
             self.pos += self.direction  
         for friend in friends:
             if not friend == self:
-                colider(self, friend)
-                dist = self.pos.get_distance(friend.pos)
-                if dist < 23 and self.health > 0:
-                    if self.health < 2:
-                        self.health = 0
-                    else:
-                        self.health -= 2
-                        if friend.health + 2 < friend.max_health:
-                            friend.health +=2
+                self.zombie_interaction(friend)
+        for item in items:
+            dist = self.pos.get_distance(item.pos)
+            if dist < 20:
+                item.take(self)
+                items.remove(item)
+                
 
     def draw(self, screen, mouse_pos, focus):
         screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))

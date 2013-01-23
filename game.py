@@ -10,6 +10,7 @@ from projectiles import Bullet, fire_bullets
 from enemy import Zombie_manager
 from debug_tools import debug_static_map
 from utils import *
+from items import Item
 
 class Building():
     # to do
@@ -28,6 +29,8 @@ class Starter(PygameHelper):
 
     bullets = []
 
+    items = []
+
     zombies = Zombie_manager()
 
     def __init__(self):
@@ -37,10 +40,10 @@ class Starter(PygameHelper):
         self.player = Player()
         
     def update(self):
-        self.player.update(self.input_list, self.zombies.zombies)
+        self.player.update(self.input_list, self.zombies.zombies, self.items)
         if self.player.health == 0:
             self.running = False
-            
+
         update_focus(self.player.pos - self.focus, self.focus)
 
         dead_bullet = None
@@ -52,7 +55,7 @@ class Starter(PygameHelper):
         if not dead_bullet == None:
             self.bullets.remove(dead_bullet)
 
-        self.zombies.update(self.player)
+        self.zombies.update(self.player, self.items)
 
 
     def keyUp(self, key):
@@ -93,6 +96,9 @@ class Starter(PygameHelper):
 
         debug_static_map(self.screen, self.focus, self.w, self.h)
 
+        for item in self.items:
+            item.draw(self.screen, self.focus)
+
         for enemy in self.zombies.zombies:
             enemy.draw(self.screen, self.focus)
 
@@ -100,6 +106,7 @@ class Starter(PygameHelper):
 
         for bullet in self.bullets:
             bullet.draw(self.screen, self.focus)
+
 
         
 s = Starter()

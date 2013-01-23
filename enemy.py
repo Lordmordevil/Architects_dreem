@@ -6,17 +6,8 @@ from math import e, pi, cos, sin, sqrt
 from random import uniform
 
 from utils import colider
+from items import Item
 
-class Item():
-    pos = vec2d(0, 0)
-    tip = 1
-
-    def __init__(self, pos, tip):
-        self.pos = vec2d(pos)
-        self.tip = tip
-
-    def draw(self, screen, focus):
-        pass
 
 class Zombie_manager():
 
@@ -30,7 +21,7 @@ class Zombie_manager():
         temp = Zombie(vec2d(int(uniform(0, 750)), int(uniform(0, 550))))
         self.zombies.append(temp)
 
-    def update(self, player):
+    def update(self, player, items):
         dead_enemy = None
         for enemy in self.zombies:
             if enemy.health > 0:
@@ -38,8 +29,8 @@ class Zombie_manager():
             else:
                 dead_enemy = enemy
         if not dead_enemy == None:
+            items.append(Item(dead_enemy.pos, 1))
             self.zombies.remove(dead_enemy)
-
             self.add_zombie()
 
 class Zombie():
