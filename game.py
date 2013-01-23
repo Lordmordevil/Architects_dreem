@@ -6,10 +6,17 @@ from math import e, pi, cos, sin, sqrt
 from random import uniform
 
 from player import Player
-from projectiles import Bullet
+from projectiles import Bullet, fire_bullets
 from enemy import Zombie_manager
 from debug_tools import debug_static_map
 
+class Building():
+    # to do
+    def __init__(self, type, pos):
+        self.pos = vec2d(pos[0]//30 + 1, pos[1]//30 + 1)
+
+    def draw(self, screen, offset):
+        pygame.draw.rect(screen, (0, 0, 0), (self.pos[0], self.pos[1], 30, 30), 5)
 
 class Starter(PygameHelper):
 
@@ -29,7 +36,9 @@ class Starter(PygameHelper):
         self.player = Player()
         
     def update(self):
-        self.player.update(self.input_list)
+        self.player.update(self.input_list, self.zombies.zombies)
+        if self.player.health == 0:
+            self.running = False
         alt_player_pos = self.player.pos - self.focus
         if alt_player_pos[0] > 700:
             self.focus[0] += alt_player_pos[0] - 700
@@ -71,11 +80,15 @@ class Starter(PygameHelper):
             self.input_list["S"] = 1
         if key == 100:
             self.input_list["D"] = 1
-
+        if key == 114:
+            self.player.reload()
+        if key - 48 in range(9):
+            self.player.equipped_gun = key - 48
         
     def mouseUp(self, button, pos):
-        temp_bullet = Bullet(self.player.pos, self.player.pos - vec2d(pos) + self.player.direction)
-        self.bullets.append(temp_bullet)
+        if button == 1:
+            bullet_dir = vec2d(self.player.pos - self.focus - vec2d(pos) + self.player.direction)
+            fire_bullets(self.player, self.bullets, bullet_dir) 
         
     def mouseMotion(self, buttons, pos, rel):
         self.mouse_pos = vec2d(pos)

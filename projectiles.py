@@ -2,8 +2,22 @@ from pygamehelper import *
 from pygame import *
 from pygame.locals import *
 from vec2d import *
-from math import e, pi, cos, sin, sqrt
-from random import uniform
+
+
+def fire_bullets(player, bullets, bullet_dir):
+    gun_pos = vec2d(- 15, - 7)
+    gun_pos.rotate(bullet_dir.get_angle())
+    if player.equipped_gun == 1 and player.ammo >= 1:
+        new_bullet = Bullet(player.pos + gun_pos, bullet_dir)
+        bullets.append(new_bullet)
+        player.ammo -= 1
+    elif player.equipped_gun == 2 and player.ammo >= 5:
+        for direct in range(5):
+            new_bullet = Bullet(player.pos + gun_pos, bullet_dir.rotated(int((direct - 2) * 5)))
+            bullets.append(new_bullet)
+        player.ammo -= 5
+        bullet_dir.length = 6
+        player.pos += bullet_dir 
 
 class Bullet():
 
@@ -25,6 +39,8 @@ class Bullet():
             if dist.length < 10:
                 self.life = 0
                 enemy.health -= 30
+                enemy.pos += self.direction
+
 
     def draw(self, screen, focus):
         pygame.draw.line( screen, (150, 0, 0), 

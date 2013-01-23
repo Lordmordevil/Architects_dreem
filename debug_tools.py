@@ -19,6 +19,6 @@ def debug_static_map(screen, focus, screen_width, screen_height):
         width_line_count = screen_width//box_size
         height_line_count = screen_height//box_size
         for colmn in range(width_line_count + 1):
-            draw_colmn(offset[0] + colmn * box_size, screen_height, screen)
+            draw_colmn(colmn * box_size - offset[0], screen_height, screen)
         for row in range(height_line_count + 1):
-            draw_row(offset[1] + row * box_size, screen_width, screen)
+            draw_row(row * box_size - offset[1], screen_width, screen)

@@ -5,6 +5,8 @@ from vec2d import *
 from math import e, pi, cos, sin, sqrt
 from random import uniform
 
+from utils import colider
+
 class Zombie_manager():
 
     zombies = []
@@ -33,15 +35,6 @@ class Zombie():
     def __init__(self, pos):
         self.pos = vec2d(pos)
 
-    def colider (self, friend):
-        dist = self.pos.get_distance(friend.pos)
-        if dist < 20:
-            overlap = 20 - dist
-            ndir = friend.pos - self.pos
-            ndir.length = overlap
-            ndir.length =  ndir.length / 2
-            friend.pos = friend.pos + ndir
-            self.pos = self.pos - ndir
 
     def update(self, player, friends):
         self.direction = player.pos - self.pos
@@ -50,7 +43,7 @@ class Zombie():
             self.pos += self.direction  
         for friend in friends:
             if not friend == self:
-                self.colider(friend)
+                colider(self, friend)
 
     def draw(self, screen, focus):
         pygame.draw.circle(screen, (250 - self.health//3, 50 + self.health//3, 0), 
