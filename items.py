@@ -7,7 +7,7 @@ class Item():
     pos = vec2d(0, 0)
     tip = 1
 
-    item_id = {1: "clip"}
+    item_id = {1: "clip", 2:"medpack"}
 
     def __init__(self, pos, tip):
         self.pos = vec2d(pos)
@@ -17,6 +17,8 @@ class Item():
     def take(self, player):
         if self.tip == 1:
             player.clips += 1
+        elif self.tip == 2:
+        	player.health += 100
 
     def draw(self, screen, focus):
         screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))

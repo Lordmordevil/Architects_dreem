@@ -13,6 +13,8 @@ class Zombie_manager():
 
     zombies = []
 
+    dead_counter = 0
+
     def __init__(self):
         for number in range(6):
             self.add_zombie()
@@ -29,8 +31,12 @@ class Zombie_manager():
             else:
                 dead_enemy = enemy
         if not dead_enemy == None:
-            items.append(Item(dead_enemy.pos, 1))
+            item_id = int(uniform(1, 3))
+            if item_id - 1 in range(2):
+                items.append(Item(dead_enemy.pos, item_id))
             self.zombies.remove(dead_enemy)
+            self.dead_counter += 1
+            print(self.dead_counter)
             self.add_zombie()
 
 class Zombie():
@@ -50,7 +56,7 @@ class Zombie():
         self.direction = player.pos - self.pos
         if self.direction.length > 5:
             self.direction.length = 2
-            self.pos += self.direction  
+            #self.pos += self.direction  
         for friend in friends:
             if not friend == self:
                 colider(self, friend)

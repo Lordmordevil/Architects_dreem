@@ -11,14 +11,9 @@ from enemy import Zombie_manager
 from debug_tools import debug_static_map
 from utils import *
 from items import Item
+from buildings import *
 
-class Building():
-    # to do
-    def __init__(self, type, pos):
-        self.pos = vec2d(pos[0]//30 + 1, pos[1]//30 + 1)
 
-    def draw(self, screen, offset):
-        pygame.draw.rect(screen, (0, 0, 0), (self.pos[0], self.pos[1], 30, 30), 5)
 
 class Starter(PygameHelper):
 
@@ -32,6 +27,9 @@ class Starter(PygameHelper):
     items = []
 
     zombies = Zombie_manager()
+
+    buildings = []
+    generate_house(vec2d(1000, 1000), buildings)
 
     def __init__(self):
         self.w, self.h = 800, 600
@@ -106,6 +104,9 @@ class Starter(PygameHelper):
 
         for bullet in self.bullets:
             bullet.draw(self.screen, self.focus)
+
+        for building in self.buildings:
+            building.draw(self.screen, self.focus)
 
 
         
