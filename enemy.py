@@ -44,7 +44,7 @@ class Zombie():
     health = 200
     max_health = 200
     pos = vec2d(100, 100)
-    direction = vec2d(1, 1)
+    direction = vec2d(int(uniform(0, 3)) - 1, int(uniform(0, 3) - 1))
     size = 20
 
     def __init__(self, pos):
@@ -54,10 +54,11 @@ class Zombie():
 
 
     def update(self, player, friends, walls):
-        self.direction = player.pos - self.pos
-        if self.direction.length > 5:
+        dist = player.pos.get_distance(self.pos)
+        if dist < 40:
+            self.direction = player.pos - self.pos
             self.direction.length = 2
-            self.pos += self.direction  
+            self.pos += self.directionS
         for friend in friends:
             if not friend == self:
                 colider(self, friend, (self.size + friend.size) // 2)
