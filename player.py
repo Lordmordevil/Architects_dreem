@@ -5,12 +5,13 @@ from vec2d import *
 from math import e, pi, cos, sin, sqrt
 from random import uniform
 
-from utils import colider
+from utils import colider, wall_colider
 
 class Player():
 
     pos = vec2d(100, 100)
     direction = vec2d(0, 0)
+    size = 20
 
     health = 1000
 
@@ -31,7 +32,7 @@ class Player():
             self.ammo = 10
 
     def zombie_interaction(self, friend):
-        colider(self, friend)
+        colider(self, friend, (self.size + friend.size) // 2)
         dist = self.pos.get_distance(friend.pos)
         if dist < 23 and self.health > 0:
             if self.health < 2:
@@ -41,7 +42,7 @@ class Player():
                 if friend.health + 2 < friend.max_health:
                     friend.health +=2
 
-    def update(self, input_list, friends, items):
+    def update(self, input_list, friends, items, walls):
         self.direction = vec2d(0, 0)
 
         if input_list["W"]:
@@ -58,6 +59,8 @@ class Player():
         for friend in friends:
             if not friend == self:
                 self.zombie_interaction(friend)
+        for wall in walls:
+            wall_colider(self, wall, (self.size + wall.size) // 2)
         for item in items:
             dist = self.pos.get_distance(item.pos)
             if dist < 20:

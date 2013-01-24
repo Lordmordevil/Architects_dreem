@@ -4,44 +4,55 @@ from pygame.locals import *
 from vec2d import *
 from random import uniform
 
-def generate_house(pos, buildings):
-	def generate_room_walls(walls, base, start_pos):
-		for x in range(base[0] + 1):
-			for y in range(base[1] + 1):
-				if x == 0 or x == base[0] or y == 0 or y == base[1]:
-					walls.append(Wall(vec2d(start_pos[0] + x * 30, start_pos[1] + y * 30)))
+def load_map(buildings):
+    map_file = open('assets/map.csv', 'r')
+
+    map_line = map_file.readline()
+
+    coords = [0, 0]
+
+    while not map_line == '':
+        cells = map_line.split(";")
+        for cell in cells:
+            cell_info = cell.split("/")
+            if not cell_info[0] == "0":
+                if cell_info[1] == "0/n":
+                    cell_info[1] = "0"
+                buildings.walls.append(Wall(vec2d(coords[0] * 30 + 15, coords[1] * 30 + 15), cell_info[0], cell_info[1]))
+            coords[0] += 1
 
 
-	start_pos = vec2d(pos[0] - (pos[0] % 30), pos[1] - (pos[1] % 30))
-	base = [int(uniform(10, 20)), int(uniform(10, 20))]
-	room1 = [int(uniform(3, 10)), int(uniform(3, 10))]
-	room2 = [int(uniform(3, 10)), int(uniform(3, 10))]
-	room3 = [int(uniform(3, 15)), int(uniform(3, 10))]
-	walls = []
-	generate_room_walls(walls, base, start_pos)
-	room1_start_pos = [start_pos[0] + (base[0] - room1[0]) * 30 ,start_pos[1] + (base[1] - room1[1]) * 30]
-	generate_room_walls(walls, room1, room1_start_pos)
-	room2_start_pos = [start_pos[0], start_pos[1] + (base[1] - room2[1]) * 30]
-	generate_room_walls(walls, room2, room2_start_pos)
-	room3_start_pos = [start_pos[0] + (base[0] - room3[0]) * 30, start_pos[1]]
-	generate_room_walls(walls, room3, room3_start_pos)
-	buildings.append(Building(walls))
+        coords[1] += 1
+        coords[0] = 0
+        map_line = map_file.readline()
 
 
 class Wall():
 
-	def __init__(self, pos):	
-		self.pos = pos
-		self.dir = 0
+    sprite_dict = { '1':"wall", '2':"door", '3':"window"}
 
-	def draw(self, screen, offset):
-		pygame.draw.rect(screen, (90, 90, 90), (self.pos[0] - int(offset[0]), self.pos[1] - int(offset[1]), 30, 30))
+    size = 25
 
-class Building():
+    def __init__(self, pos, wall_type, direct):    
+        self.pos = pos
+        self.dir = direct
+        self.type = wall_type
 
-    def __init__(self, walls):
-        self.walls = walls
+        self.sprite = pygame.image.load("assets/obsticles/" + self.sprite_dict[wall_type] + ".png")
+        if not direct == "0":
+        	self.sprite = pygame.transform.rotate(self.sprite, int( 90 * (ord(direct) - 48) ))
 
-    def draw(self, screen, offset):
+
+    def draw(self, screen, focus):
+        screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
+        sprite_size = self.sprite.get_size()
+        screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)))
+
+class Buildings():
+
+    def __init__(self):
+        self.walls = []
+
+    def draw(self, screen, focus):
         for wall in self.walls:
-        	wall.draw(screen, offset)
+            wall.draw(screen, focus)

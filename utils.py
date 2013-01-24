@@ -5,15 +5,25 @@ from vec2d import *
 from math import e, pi, cos, sin, sqrt
 from random import uniform
 
-def colider (obekt, friend):
+def colider (obekt, friend, size):
     dist = obekt.pos.get_distance(friend.pos)
-    if dist < 20:
-        overlap = 20 - dist
+    if dist < size:
+        overlap = size - dist
         ndir = friend.pos - obekt.pos
         ndir.length = overlap
         ndir.length =  ndir.length / 2
         friend.pos = friend.pos + ndir
         obekt.pos = obekt.pos - ndir
+
+def wall_colider (obekt, wall, size):
+    passable = ["2"]
+    if not wall.type in passable:
+        dist = obekt.pos.get_distance(wall.pos)
+        if dist < size:
+            overlap = int(size) - dist
+            ndir = wall.pos - obekt.pos
+            ndir.length = overlap
+            obekt.pos = obekt.pos - ndir
 
 def update_focus(alt_player_pos, focus):
     if alt_player_pos[0] > 700:

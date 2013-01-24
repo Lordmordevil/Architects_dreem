@@ -28,8 +28,9 @@ class Starter(PygameHelper):
 
     zombies = Zombie_manager()
 
-    buildings = []
-    generate_house(vec2d(1000, 1000), buildings)
+    buildings = Buildings()
+    load_map(buildings)
+
 
     def __init__(self):
         self.w, self.h = 800, 600
@@ -38,7 +39,9 @@ class Starter(PygameHelper):
         self.player = Player()
         
     def update(self):
-        self.player.update(self.input_list, self.zombies.zombies, self.items)
+        self.player.update(self.input_list, self.zombies.zombies, self.items, self.buildings.walls)
+
+        
         if self.player.health == 0:
             self.running = False
 
@@ -53,7 +56,7 @@ class Starter(PygameHelper):
         if not dead_bullet == None:
             self.bullets.remove(dead_bullet)
 
-        self.zombies.update(self.player, self.items)
+        self.zombies.update(self.player, self.items, self.buildings.walls)
 
 
     def keyUp(self, key):
@@ -84,6 +87,8 @@ class Starter(PygameHelper):
         if button == 1:
             bullet_dir = vec2d(self.player.pos - self.focus - vec2d(pos) + self.player.direction)
             fire_bullets(self.player, self.bullets, bullet_dir) 
+        if button == 3:
+            self.player.reload()
         
     def mouseMotion(self, buttons, pos, rel):
         self.mouse_pos = vec2d(pos)
@@ -105,8 +110,7 @@ class Starter(PygameHelper):
         for bullet in self.bullets:
             bullet.draw(self.screen, self.focus)
 
-        for building in self.buildings:
-            building.draw(self.screen, self.focus)
+        self.buildings.draw(self.screen, self.focus)
 
 
         

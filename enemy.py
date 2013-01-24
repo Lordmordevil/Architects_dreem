@@ -5,7 +5,7 @@ from vec2d import *
 from math import e, pi, cos, sin, sqrt
 from random import uniform
 
-from utils import colider
+from utils import colider, wall_colider
 from items import Item
 
 
@@ -20,14 +20,14 @@ class Zombie_manager():
             self.add_zombie()
 
     def add_zombie(self):
-        temp = Zombie(vec2d(int(uniform(0, 750)), int(uniform(0, 550))))
+        temp = Zombie(vec2d(int(uniform(0, 350)), int(uniform(0, 350))))
         self.zombies.append(temp)
 
-    def update(self, player, items):
+    def update(self, player, items, walls):
         dead_enemy = None
         for enemy in self.zombies:
             if enemy.health > 0:
-                enemy.update(player, self.zombies)
+                enemy.update(player, self.zombies, walls)
             else:
                 dead_enemy = enemy
         if not dead_enemy == None:
@@ -44,7 +44,8 @@ class Zombie():
     health = 200
     max_health = 200
     pos = vec2d(100, 100)
-    direction = vec2d(0, 0)
+    direction = vec2d(1, 1)
+    size = 20
 
     def __init__(self, pos):
         self.pos = vec2d(pos)
@@ -52,14 +53,16 @@ class Zombie():
         self.base_sprite = self.sprite
 
 
-    def update(self, player, friends):
+    def update(self, player, friends, walls):
         self.direction = player.pos - self.pos
         if self.direction.length > 5:
             self.direction.length = 2
-            #self.pos += self.direction  
+            self.pos += self.direction  
         for friend in friends:
             if not friend == self:
-                colider(self, friend)
+                colider(self, friend, (self.size + friend.size) // 2)
+        for wall in walls:
+            wall_colider(self, wall, (self.size + wall.size) // 2)
 
     def draw(self, screen, focus):
         screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
