@@ -50,17 +50,17 @@ class Wall():
         if not direct == "0":
             self.sprite = pygame.transform.rotate(self.sprite, int( 90 * (ord(direct) - 48) ))
 
-
     def draw(self, screen, focus):
         screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
         sprite_size = self.sprite.get_size()
         screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)))
 
+
 class Map_cell():
     pos = vec2d(0 ,0)
     static_content = null
 
-    def __init__(self):
+    def __init__(self, pos):
         pass
 
     def map_coords_to_pixels(self, coords):
@@ -71,6 +71,8 @@ class Map_cell():
 
 class Map():
 
+    data = []
+
     def __init__(self):
         map_file = open('assets/map.csv', 'r')
         map_line = map_file.readline()
@@ -78,11 +80,13 @@ class Map():
         while not map_line == '':
             cells = map_line.split(";")
             for cell in cells:
+                key = '{0[0]},{0[1]}'.format(coords)
+                self.data[key] = Map_cell(vec2d(coords[0], coords[1]))
                 cell_info = cell.split("/")
                 if not cell_info[0] == "0":
                     if cell_info[1] == "0/n":
                         cell_info[1] = "0"
-                    buildings.walls.append(Wall(vec2d(coords[0] * 30 + 15, coords[1] * 30 + 15), cell_info[0], cell_info[1]))
+                    self.data[key].static_content = Wall(vec2d(coords[0], coords[1]), cell_info[0], cell_info[1])
                 coords[0] += 1
 
 
@@ -94,6 +98,9 @@ class Map():
         pass
 
     def define_item(self, item):
+        pass
+
+    def draw(self, screen, focus):
         pass
 
     
