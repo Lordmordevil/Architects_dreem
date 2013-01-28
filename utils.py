@@ -34,3 +34,24 @@ def update_focus(alt_player_pos, focus):
         focus[0] -= 300 - alt_player_pos[0]
     if alt_player_pos[1] < 250:
         focus[1] -= 250 - alt_player_pos[1]
+
+
+class Map_cell():
+    pos = vec2d(0 ,0)
+    static_content = null
+
+class Map():
+    def __init__(self):
+        pass
+
+    def define_wall(self, wall):
+        pass
+
+    def define_item(self, item):
+        pass
+
+    def map_coords_to_pixels(self, coords):
+        return vec2d(coordsp[0] * 30 + 15, coordsp[1] * 30 + 15)
+
+    def pixels_to_map_coords(self, coords):
+        return vec2d(coords[0]//30, coords[1]//30)
