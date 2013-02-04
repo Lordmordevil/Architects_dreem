@@ -5,7 +5,7 @@ from vec2d import *
 from math import e, pi, cos, sin, sqrt
 from random import uniform
 
-from utils import colider, wall_colider
+from utils import *
 from items import Item
 
 
@@ -15,29 +15,33 @@ class Zombie_manager():
 
     dead_counter = 0
 
-    def __init__(self):
+    def __init__(self, world_map):
         for number in range(6):
-            self.add_zombie()
+            self.add_zombie(world_map)
 
-    def add_zombie(self):
-        temp = Zombie(vec2d(int(uniform(0, 350)), int(uniform(0, 350))))
+    def add_zombie(self, world_map):
+        temp = Zombie(vec2d(int(uniform(0, 350)) + 100, int(uniform(0, 350) + 100)), world_map)
         self.zombies.append(temp)
 
-    def update(self, player, items, walls):
+    def update(self, player, items, world_map):
         dead_enemy = None
         for enemy in self.zombies:
             if enemy.health > 0:
-                enemy.update(player, self.zombies, walls)
+                enemy.update(player, self.zombies, world_map)
             else:
                 dead_enemy = enemy
+
         if not dead_enemy == None:
             item_id = int(uniform(1, 3))
             if item_id - 1 in range(2):
                 items.append(Item(dead_enemy.pos, item_id))
+
+            world_map.data[dead_enemy.home_cell].entitys.remove(dead_enemy)
             self.zombies.remove(dead_enemy)
+
             self.dead_counter += 1
             print(self.dead_counter)
-            self.add_zombie()
+            self.add_zombie(world_map)
 
 class Zombie():
 
@@ -47,23 +51,29 @@ class Zombie():
     direction = vec2d(int(uniform(0, 3)) - 1, int(uniform(0, 3) - 1))
     size = 20
 
-    def __init__(self, pos):
+    def __init__(self, pos, world_map):
         self.pos = vec2d(pos)
         self.sprite = pygame.image.load("assets/enemy/zombie.png")
         self.base_sprite = self.sprite
+        self.home_cell = '{0[0]},{0[1]}'.format([int(pos[0]//30) + 1, int(pos[1]//30) + 1])
+        world_map.data[self.home_cell].entitys.append(self)
 
 
-    def update(self, player, friends, walls):
+    def update(self, player, friends, world_map):
         dist = player.pos.get_distance(self.pos)
-        if dist < 40:
+        if dist < 400:
             self.direction = player.pos - self.pos
             self.direction.length = 2
-            self.pos += self.directionS
-        for friend in friends:
-            if not friend == self:
-                colider(self, friend, (self.size + friend.size) // 2)
-        for wall in walls:
-            wall_colider(self, wall, (self.size + wall.size) // 2)
+            self.pos += self.direction
+            new_home_cell = '{0[0]},{0[1]}'.format([int(self.pos[0]//30) + 1, int(self.pos[1]//30) + 1])
+            if not new_home_cell == self.home_cell:
+                world_map.data[self.home_cell].entitys.remove(self)
+                world_map.data[new_home_cell].entitys.append(self)
+                self.home_cell = new_home_cell
+
+        colider(self, world_map, self.size, "zombie")
+        wall_colider(self, world_map, self.size)
+
 
     def draw(self, screen, focus):
         screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))

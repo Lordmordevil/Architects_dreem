@@ -9,7 +9,7 @@ from utils import colider, wall_colider
 
 class Player():
 
-    pos = vec2d(100, 100)
+    pos = vec2d(400, 300)
     direction = vec2d(0, 0)
     size = 20
 
@@ -31,18 +31,7 @@ class Player():
             self.clips -= 1
             self.ammo = 10
 
-    def zombie_interaction(self, friend):
-        colider(self, friend, (self.size + friend.size) // 2)
-        dist = self.pos.get_distance(friend.pos)
-        if dist < 23 and self.health > 0:
-            if self.health < 2:
-                self.health = 0
-            else:
-                self.health -= 2
-                if friend.health + 2 < friend.max_health:
-                    friend.health +=2
-
-    def update(self, input_list, friends, items, walls):
+    def update_direction(self, input_list):
         self.direction = vec2d(0, 0)
 
         if input_list["W"]:
@@ -53,19 +42,22 @@ class Player():
             self.direction[1] += 1
         if input_list["D"]:
             self.direction[0] += 1
+
+    def update(self, input_list, friends, items, world_map):
+        self.update_direction(input_list)
+
         if self.direction.get_length() and self.health > 0:
             self.direction.length = 2
             self.pos += self.direction  
-        for friend in friends:
-            if not friend == self:
-                self.zombie_interaction(friend)
-        for wall in walls:
-            wall_colider(self, wall, (self.size + wall.size) // 2)
+
+        colider(self, world_map, self.size, "player")
+
         for item in items:
             dist = self.pos.get_distance(item.pos)
             if dist < 20:
                 item.take(self)
                 items.remove(item)
+        wall_colider(self, world_map, self.size)
                 
 
     def draw(self, screen, mouse_pos, focus):

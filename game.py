@@ -25,9 +25,10 @@ class Starter(PygameHelper):
 
     items = []
 
-    zombies = Zombie_manager()
-
     world_map = Map()
+
+    zombies = Zombie_manager(world_map)
+
 
 
 
@@ -38,13 +39,13 @@ class Starter(PygameHelper):
         self.player = Player()
         
     def update(self):
-        self.player.update(self.input_list, self.zombies.zombies, self.items, self.buildings.walls)
+        self.player.update(self.input_list, self.zombies.zombies, self.items, self.world_map)
 
         
         if self.player.health == 0:
             self.running = False
 
-        update_focus(self.player.pos - self.focus, self.focus)
+        update_focus(self.player.pos - self.focus, self.focus, self.world_map)
 
         dead_bullet = None
         for bullet in self.bullets:
@@ -55,7 +56,7 @@ class Starter(PygameHelper):
         if not dead_bullet == None:
             self.bullets.remove(dead_bullet)
 
-        self.zombies.update(self.player, self.items)
+        self.zombies.update(self.player, self.items, self.world_map)
 
 
     def keyUp(self, key):
