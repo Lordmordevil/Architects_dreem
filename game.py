@@ -8,7 +8,6 @@ from random import uniform
 from player import Player
 from projectiles import Bullet, fire_bullets
 from enemy import Zombie_manager
-from debug_tools import debug_static_map
 from utils import *
 from items import Item
 
@@ -99,10 +98,8 @@ class Starter(PygameHelper):
 
         self.world_map.draw(self.screen, self.focus, self.player.pos)
 
-        #debug_static_map(self.screen, self.focus, self.w, self.h)
-
         for item in self.items:
-            item.draw(self.screen, self.focus)
+            item.draw(self.screen, self.focus, self.world_map)
 
         for enemy in self.zombies.zombies:
             enemy.draw(self.screen, self.focus, self.world_map)

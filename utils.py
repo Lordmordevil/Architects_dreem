@@ -139,9 +139,10 @@ class Map():
     def draw_light_map(self, player_pos,):
         player_light_map_pos = [player_pos[0]//30 - 6, player_pos[1]//30 -6]
         player_map_pos = [player_pos[0]//30, player_pos[1]//30]
+        '''
         for sign in range(2):
-            for ang in range(181):
-                coord_y = int(tan(radians(ang)))
+            for ang in range(61):
+                coord_y = int(tan(radians(ang*3)))
                 if sign == 1:
                     pos = vec2d(8, coord_y)
                 else:
@@ -154,6 +155,23 @@ class Map():
                         self.data[key].active_light_level = self.data[key].pasive_light_level + 8 - length
                     if type(self.data[key].static_content) == Wall and not self.data[key].static_content.type == "3":
                         break
+                        '''
+        map_periferal_points = [[0, -9], [1, -9], [2, -9], [3, -8], [4, -8], [5, -7], [6, -7], [7, -6], [7, -5], [8, -4], [8, -3], [9, -2], [9, -1], [9, 0]]
+        for sign_x in range(2):
+            for sign_y in range(2):
+                for point in map_periferal_points:
+                    ray = vec2d(point[0], point[1])
+                    if sign_x == 1: ray[0] *= -1
+                    if sign_y == 1: ray[1] *= -1
+                    for length in range(36):
+                        ray.length = length/4 + 1
+                        coords = [int(player_map_pos[0] + ray[0]), int(player_map_pos[1] + ray[1])]
+                        key = '{0[0]},{0[1]}'.format(coords)
+                        if self.data[key].active_light_level == self.data[key].pasive_light_level or self.data[key].active_light_level == 0:
+                            self.data[key].active_light_level = self.data[key].pasive_light_level + 8 - int(length/4)
+                            if self.data[key].active_light_level > 7: self.data[key].active_light_level = 7
+                        if type(self.data[key].static_content) == Wall and not self.data[key].static_content.type == "3":
+                            break
 
 
     def draw(self, screen, focus, player_pos):

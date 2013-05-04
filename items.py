@@ -20,7 +20,11 @@ class Item():
         elif self.tip == 2:
         	player.health += 100
 
-    def draw(self, screen, focus):
-        screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
-        sprite_size = self.sprite.get_size()
-        screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)))
+    def draw(self, screen, focus, world_map):
+        entity_map_pos = [self.pos[0]//30, self.pos[1]//30]
+        coords = [int(entity_map_pos[0]), int(entity_map_pos[1])]
+        key = '{0[0]},{0[1]}'.format(coords)
+        if world_map.data[key].active_light_level > 0:
+            screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
+            sprite_size = self.sprite.get_size()
+            screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)), special_flags = BLEND_MULT)
