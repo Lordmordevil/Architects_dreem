@@ -95,22 +95,26 @@ class Starter(PygameHelper):
      
 
     def draw(self):
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((0, 0, 0))
 
-        debug_static_map(self.screen, self.focus, self.w, self.h)
+        self.world_map.draw(self.screen, self.focus, self.player.pos)
+
+        #debug_static_map(self.screen, self.focus, self.w, self.h)
 
         for item in self.items:
             item.draw(self.screen, self.focus)
 
         for enemy in self.zombies.zombies:
-            enemy.draw(self.screen, self.focus)
+            enemy.draw(self.screen, self.focus, self.world_map)
 
         self.player.draw(self.screen, self.mouse_pos, self.focus)
 
         for bullet in self.bullets:
             bullet.draw(self.screen, self.focus)
 
-        self.world_map.draw(self.screen, self.focus)
+        self.world_map.reset()
+
+        
 
 
         

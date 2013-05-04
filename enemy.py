@@ -75,15 +75,19 @@ class Zombie():
         wall_colider(self, world_map, self.size)
 
 
-    def draw(self, screen, focus):
-        screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
+    def draw(self, screen, focus , world_map):
+        entity_map_pos = [self.pos[0]//30, self.pos[1]//30]
+        coords = [int(entity_map_pos[0]), int(entity_map_pos[1])]
+        key = '{0[0]},{0[1]}'.format(coords)
+        if world_map.data[key].active_light_level > 0:
+            screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
 
-        pygame.draw.line(screen, (0, 0, 0), screen_pos, (screen_pos[0] + 15, screen_pos[1] - 10))
+            pygame.draw.line(screen, (0, 0, 0), screen_pos, (screen_pos[0] + 15, screen_pos[1] - 10))
 
-        pygame.draw.rect(screen, (255, 70, 70), (screen_pos[0] + 15, screen_pos[1] + 9, 4,int((-1) * self.health/(self.max_health/18))))
-        pygame.draw.rect(screen, (0, 0, 0), (screen_pos[0] + 15, screen_pos[1] - 10, 4, 20), 1)
+            pygame.draw.rect(screen, (255, 70, 70), (screen_pos[0] + 15, screen_pos[1] + 9, 4,int((-1) * self.health/(self.max_health/18))))
+            pygame.draw.rect(screen, (0, 0, 0), (screen_pos[0] + 15, screen_pos[1] - 10, 4, 20), 1)
 
-        rotation = - self.direction
-        self.sprite = pygame.transform.rotate(self.base_sprite, int( 270 - rotation.get_angle()))
-        sprite_size = self.sprite.get_size()
-        screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)))
+            rotation = - self.direction
+            self.sprite = pygame.transform.rotate(self.base_sprite, int( 270 - rotation.get_angle()))
+            sprite_size = self.sprite.get_size()
+            screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)), special_flags = BLEND_MULT)

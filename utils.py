@@ -2,7 +2,7 @@ from pygamehelper import *
 from pygame import *
 from pygame.locals import *
 from vec2d import *
-from math import e, pi, cos, sin, sqrt
+from math import *
 from random import uniform
 
 def colider (obekt, world_map, size, obekt_type):
@@ -71,19 +71,21 @@ class Wall():
         if not direct == "0":
             self.sprite = pygame.transform.rotate(self.sprite, int( 90 * (ord(direct) - 48) ))
 
-    def draw(self, screen, focus):
+    def draw(self, screen, focus, alpha):
         screen_pos = vec2d(int(self.pos[0] * 30 + 15 - focus[0]), int(self.pos[1] * 30 + 15 - focus[1]))
         sprite_size = self.sprite.get_size()
-        screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)))
+        screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)), special_flags = BLEND_MULT)
 
 
 class Map_cell():
     pos = vec2d(0 ,0)
+    pasive_light_level = 0
+    active_light_level = 0
     static_content = []
     entitys = []
 
     def __init__(self, pos):
-        pass
+        self.pos = pos
 
     def map_coords_to_pixels(self, coords):
         return vec2d(coords[0] * 30 + 15, coords[1] * 30 + 15)
@@ -92,8 +94,11 @@ class Map_cell():
         return vec2d(coords[0]//30, coords[1]//30)
 
     def draw(self, screen, focus):
-        if type(self.static_content) == Wall:
-            self.static_content.draw(screen, focus)
+        screen_pos = vec2d(int(self.pos[0] * 30 - focus[0]), int(self.pos[1] * 30 - focus[1]))
+        alpha = 25 * self.active_light_level
+        pygame.draw.rect(screen, (alpha, alpha, alpha), (screen_pos[0], screen_pos[1], 30, 30))
+        if type(self.static_content) == Wall and self.active_light_level > 0:
+            self.static_content.draw(screen, focus, alpha)
 
 class Map():
 
@@ -131,14 +136,42 @@ class Map():
     def define_item(self, item):
         pass
 
-    def draw(self, screen, focus):
+    def draw_light_map(self, player_pos,):
+        player_light_map_pos = [player_pos[0]//30 - 6, player_pos[1]//30 -6]
+        player_map_pos = [player_pos[0]//30, player_pos[1]//30]
+        for sign in range(2):
+            for ang in range(181):
+                coord_y = int(tan(radians(ang)))
+                if sign == 1:
+                    pos = vec2d(8, coord_y)
+                else:
+                    pos = vec2d(-8, coord_y)
+                for length in range(8):
+                    pos.length = length + 1
+                    coords = [int(player_map_pos[0] + pos[0]), int(player_map_pos[1] + pos[1])]
+                    key = '{0[0]},{0[1]}'.format(coords)
+                    if self.data[key].active_light_level == self.data[key].pasive_light_level or self.data[key].active_light_level == 0:
+                        self.data[key].active_light_level = self.data[key].pasive_light_level + 8 - length
+                    if type(self.data[key].static_content) == Wall and not self.data[key].static_content.type == "3":
+                        break
+
+
+    def draw(self, screen, focus, player_pos):
         map_cell_focus = [focus[0]//30, focus[1]//30]
+        self.draw_light_map(player_pos)
         for x in range(27):
             for y in range(20):
                 coords = [int(map_cell_focus[0]) + x, int(map_cell_focus[1]) + y]
                 key = '{0[0]},{0[1]}'.format(coords)
-                print
                 self.data[key].draw(screen, focus)
+
+    def reset(self):
+        for cell in self.data:
+            if self.data[cell].active_light_level != self.data[cell].pasive_light_level:
+                self.data[cell].active_light_level = self.data[cell].pasive_light_level
+        
+
+
 
 
 

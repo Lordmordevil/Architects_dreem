@@ -16,6 +16,7 @@ def debug_static_map(screen, focus, screen_width, screen_height):
         offset = vec2d(0, 0)
         offset[0] = focus[0] % box_size
         offset[1] = focus[1] % box_size
+
         width_line_count = screen_width//box_size
         height_line_count = screen_height//box_size
         for colmn in range(width_line_count + 1):
