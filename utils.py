@@ -1,6 +1,6 @@
 from vec2d import vec2d
 from map import Wall
-from utils import CELL_SIZE
+from settings import CELL_SIZE
 
 
 def collider(obj, world_map, size, obj_type):
