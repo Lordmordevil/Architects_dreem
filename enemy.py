@@ -17,7 +17,7 @@ class Zombie_manager():
             self.add_zombie(world_map)
 
     def add_zombie(self, world_map):
-        temp = Zombie(vec2d(int(uniform(0, 350)) + 100, int(uniform(0, 350) + 100)), world_map)
+        temp = Zombie(vec2d(int(uniform(210, 560)) + 100, int(uniform(210, 560) + 100)), world_map)
         self.zombies.append(temp)
 
     def update(self, player, items, world_map):
@@ -49,7 +49,7 @@ class Zombie():
     size = 20
 
     def __init__(self, pos, world_map):
-        self.pos = vec2d(pos)
+        self.pos = vec2d(*pos)
         self.sprite = pygame.image.load("assets/enemy/zombie.png")
         self.base_sprite = self.sprite
         self.home_cell = '{0[0]},{0[1]}'.format([int(pos[0] // 30) + 1, int(pos[1] // 30) + 1])
