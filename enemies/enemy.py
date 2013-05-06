@@ -53,11 +53,11 @@ class Enemy:
         self.pos = vec2d(*pos)
         self.sprite = pygame.image.load(self.model)
         self.base_sprite = self.sprite
-        self.home_cell = '{0[0]},{0[1]}'.format([int(pos[0] // 30) + 1, int(pos[1] // 30) + 1])
+        self.home_cell = '{0[0]},{0[1]}'.format([int(pos[0] // CELL_SIZE) + 1, int(pos[1] // CELL_SIZE) + 1])
         world_map.data[self.home_cell].entitys.append(self)
 
     def draw(self, screen, focus, world_map):
-        entity_map_pos = [self.pos[0] // 30, self.pos[1] // 30]
+        entity_map_pos = [self.pos[0] // CELL_SIZE, self.pos[1] // CELL_SIZE]
         coords = [int(entity_map_pos[0]), int(entity_map_pos[1])]
         key = '{0[0]},{0[1]}'.format(coords)
 
@@ -90,7 +90,7 @@ class Enemy:
             self.direction = player.pos - self.pos
             self.direction.length = self.speed
             self.pos += self.direction
-            new_home_cell = '{0[0]},{0[1]}'.format([int(self.pos[0] // 30) + 1, int(self.pos[1] // 30) + 1])
+            new_home_cell = '{0[0]},{0[1]}'.format([int(self.pos[0] // CELL_SIZE) + 1, int(self.pos[1] // CELL_SIZE) + 1])
             if not new_home_cell == self.home_cell:
                 world_map.data[self.home_cell].entitys.remove(self)
                 world_map.data[new_home_cell].entitys.append(self)

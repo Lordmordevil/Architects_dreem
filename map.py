@@ -1,6 +1,7 @@
 import pygame
 
 from vec2d import vec2d
+from settings import CELL_SIZE
 
 
 class MapCell:
@@ -14,16 +15,16 @@ class MapCell:
         self.pos = pos
 
     def map_coords_to_pixels(self, coords):
-        return vec2d(coords[0] * 30 + 15, coords[1] * 30 + 15)
+        return vec2d(coords[0] * CELL_SIZE + 15, coords[1] * CELL_SIZE + 15)
 
     def pixels_to_map_coords(self, coords):
-        return vec2d(coords[0] // 30, coords[1] // 30)
+        return vec2d(coords[0] // CELL_SIZE, coords[1] // CELL_SIZE)
 
     def draw(self, screen, focus):
-        screen_pos = vec2d(int(self.pos[0] * 30 - focus[0]), int(self.pos[1] * 30 - focus[1]))
+        screen_pos = vec2d(int(self.pos[0] * CELL_SIZE - focus[0]), int(self.pos[1] * CELL_SIZE - focus[1]))
         alpha = 25 * self.active_light_level
 
-        pygame.draw.rect(screen, (alpha, alpha, alpha), (screen_pos[0], screen_pos[1], 30, 30))
+        pygame.draw.rect(screen, (alpha, alpha, alpha), (screen_pos[0], screen_pos[1], CELL_SIZE, CELL_SIZE))
         if type(self.static_content) == Wall and self.active_light_level > 0:
             self.static_content.draw(screen, focus, alpha)
 
@@ -43,7 +44,7 @@ class Wall:
             self.sprite = pygame.transform.rotate(self.sprite, int(90 * (ord(direct) - 48)))
 
     def draw(self, screen, focus, alpha):
-        screen_pos = vec2d(int(self.pos[0] * 30 + 15 - focus[0]), int(self.pos[1] * 30 + 15 - focus[1]))
+        screen_pos = vec2d(int(self.pos[0] * CELL_SIZE + 15 - focus[0]), int(self.pos[1] * CELL_SIZE + 15 - focus[1]))
         sprite_size = self.sprite.get_size()
         screen.blit(self.sprite,
                     (int(screen_pos[0] - sprite_size[0] // 2),
@@ -72,10 +73,10 @@ class Map:
                         self.data[key].static_content = Wall(vec2d(coords[0], coords[1]), cell_info[0], cell_info[1])
                     coords[0] += 1
                     if coords[1] == 0:
-                        self.map_size[0] += 30
+                        self.map_size[0] += CELL_SIZE
 
             coords[1] += 1
-            self.map_size[1] += 30
+            self.map_size[1] += CELL_SIZE
             coords[0] = 0
             map_line = map_file.readline()
 
@@ -86,7 +87,7 @@ class Map:
         pass
 
     def draw_light_map(self, player_pos):
-        player_map_pos = [player_pos[0] // 30, player_pos[1] // 30]
+        player_map_pos = [player_pos[0] // CELL_SIZE, player_pos[1] // CELL_SIZE]
         map_periferal_points = [[0, -9],
                                 [1, -9],
                                 [2, -9],
@@ -122,7 +123,7 @@ class Map:
                             break
 
     def draw(self, screen, focus, player_pos):
-        map_cell_focus = [focus[0] // 30, focus[1] // 30]
+        map_cell_focus = [focus[0] // CELL_SIZE, focus[1] // CELL_SIZE]
         self.draw_light_map(player_pos)
         for x in range(27):
             for y in range(20):

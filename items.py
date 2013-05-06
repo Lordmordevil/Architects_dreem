@@ -21,7 +21,7 @@ class Item():
             player.health += 100
 
     def draw(self, screen, focus, world_map):
-        entity_map_pos = [self.pos[0] // 30, self.pos[1] // 30]
+        entity_map_pos = [self.pos[0] // CELL_SIZE, self.pos[1] // CELL_SIZE]
         coords = [int(entity_map_pos[0]), int(entity_map_pos[1])]
         key = '{0[0]},{0[1]}'.format(coords)
         if world_map.data[key].active_light_level > 0:
