@@ -3,7 +3,8 @@ import pygame
 import settings
 from vec2d import vec2d
 from player import Player
-from enemy import Zombie_manager
+from enemies.enemy import EnemyManager
+from enemies.zombie import Zombie
 from utils import update_focus
 from map import Map
 from projectiles import fire_bullets
@@ -21,7 +22,7 @@ class Game:
     bullets = []
     items = []
     world_map = Map()
-    zombies = Zombie_manager(world_map)
+    zombies = EnemyManager(Zombie, world_map)
     running = False
     clock = pygame.time.Clock()
     fps = 0
@@ -58,7 +59,7 @@ class Game:
             self.clock.tick(self.fps)
 
     def update(self):
-        self.player.update(self.input_list, self.zombies.zombies, self.items, self.world_map)
+        self.player.update(self.input_list, self.zombies.npc_list, self.items, self.world_map)
 
         if self.player.health == 0:
             self.running = False
@@ -68,12 +69,11 @@ class Game:
 
         for bullet in self.bullets:
             if bullet.life > 0:
-                bullet.update(self.zombies.zombies)
+                bullet.update(self.zombies.npc_list)
             else:
                 dead_bullet = bullet
         if dead_bullet:
             self.bullets.remove(dead_bullet)
-
         self.zombies.update(self.player, self.items, self.world_map)
 
     def key_up(self, event):
@@ -106,7 +106,7 @@ class Game:
         for item in self.items:
             item.draw(self.screen, self.focus, self.world_map)
 
-        for enemy in self.zombies.zombies:
+        for enemy in self.zombies.npc_list:
             enemy.draw(self.screen, self.focus, self.world_map)
 
         self.player.draw(self.screen, self.mouse_pos, self.focus)
