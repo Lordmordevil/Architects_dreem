@@ -1,12 +1,9 @@
-from pygamehelper import *
-from pygame import *
-from pygame.locals import *
-from vec2d import *
-from math import e, pi, cos, sin, sqrt
+import pygame
+from vec2d import vec2d
 from random import uniform
 
-from utils import *
 from items import Item
+from utils import collider, wall_collider
 
 
 class Zombie_manager():
@@ -31,7 +28,7 @@ class Zombie_manager():
             else:
                 dead_enemy = enemy
 
-        if not dead_enemy == None:
+        if dead_enemy:
             item_id = int(uniform(1, 3))
             if item_id - 1 in range(2):
                 items.append(Item(dead_enemy.pos, item_id))
@@ -43,8 +40,8 @@ class Zombie_manager():
             print(self.dead_counter)
             self.add_zombie(world_map)
 
-class Zombie():
 
+class Zombie():
     health = 200
     max_health = 200
     pos = vec2d(100, 100)
@@ -55,9 +52,8 @@ class Zombie():
         self.pos = vec2d(pos)
         self.sprite = pygame.image.load("assets/enemy/zombie.png")
         self.base_sprite = self.sprite
-        self.home_cell = '{0[0]},{0[1]}'.format([int(pos[0]//30) + 1, int(pos[1]//30) + 1])
+        self.home_cell = '{0[0]},{0[1]}'.format([int(pos[0] // 30) + 1, int(pos[1] // 30) + 1])
         world_map.data[self.home_cell].entitys.append(self)
-
 
     def update(self, player, friends, world_map):
         dist = player.pos.get_distance(self.pos)
@@ -65,29 +61,35 @@ class Zombie():
             self.direction = player.pos - self.pos
             self.direction.length = 2
             self.pos += self.direction
-            new_home_cell = '{0[0]},{0[1]}'.format([int(self.pos[0]//30) + 1, int(self.pos[1]//30) + 1])
+            new_home_cell = '{0[0]},{0[1]}'.format([int(self.pos[0] // 30) + 1, int(self.pos[1] // 30) + 1])
             if not new_home_cell == self.home_cell:
                 world_map.data[self.home_cell].entitys.remove(self)
                 world_map.data[new_home_cell].entitys.append(self)
                 self.home_cell = new_home_cell
 
-        colider(self, world_map, self.size, "zombie")
-        wall_colider(self, world_map, self.size)
+        collider(self, world_map, self.size, "zombie")
+        wall_collider(self, world_map, self.size)
 
-
-    def draw(self, screen, focus , world_map):
-        entity_map_pos = [self.pos[0]//30, self.pos[1]//30]
+    def draw(self, screen, focus, world_map):
+        entity_map_pos = [self.pos[0] // 30, self.pos[1] // 30]
         coords = [int(entity_map_pos[0]), int(entity_map_pos[1])]
         key = '{0[0]},{0[1]}'.format(coords)
+
         if world_map.data[key].active_light_level > 0:
             screen_pos = vec2d(int(self.pos[0] - focus[0]), int(self.pos[1] - focus[1]))
-
             pygame.draw.line(screen, (0, 0, 0), screen_pos, (screen_pos[0] + 15, screen_pos[1] - 10))
-
-            pygame.draw.rect(screen, (255, 70, 70), (screen_pos[0] + 15, screen_pos[1] + 9, 4,int((-1) * self.health/(self.max_health/18))))
+            pygame.draw.rect(screen,
+                             (255, 70, 70),
+                             (screen_pos[0] + 15,
+                              screen_pos[1] + 9,
+                              4,
+                              int((-1) * self.health / (self.max_health / 18))))
             pygame.draw.rect(screen, (0, 0, 0), (screen_pos[0] + 15, screen_pos[1] - 10, 4, 20), 1)
 
-            rotation = - self.direction
-            self.sprite = pygame.transform.rotate(self.base_sprite, int( 270 - rotation.get_angle()))
+            rotation = -self.direction
+            self.sprite = pygame.transform.rotate(self.base_sprite, int(270 - rotation.get_angle()))
             sprite_size = self.sprite.get_size()
-            screen.blit(self.sprite, (int(screen_pos[0] - sprite_size[0]//2), int(screen_pos[1] - sprite_size[1]//2)), special_flags = BLEND_MULT)
+            screen.blit(self.sprite,
+                        (int(screen_pos[0] - sprite_size[0] // 2),
+                         int(screen_pos[1] - sprite_size[1] // 2)),
+                        special_flags=pygame.BLEND_MULT)

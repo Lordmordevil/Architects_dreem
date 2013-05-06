@@ -1,7 +1,6 @@
-from pygamehelper import *
-from pygame import *
-from pygame.locals import *
-from vec2d import *
+import pygame
+
+from vec2d import vec2d
 
 
 def fire_bullets(player, bullets, bullet_dir):
@@ -17,10 +16,10 @@ def fire_bullets(player, bullets, bullet_dir):
             bullets.append(new_bullet)
         player.ammo -= 5
         bullet_dir.length = 6
-        player.pos += bullet_dir 
+        player.pos += bullet_dir
 
-class Bullet():
 
+class Bullet:
     pos = vec2d(100, 100)
     direction = vec2d(0, 0)
     life = 50
@@ -41,8 +40,9 @@ class Bullet():
                 enemy.health -= 30
                 enemy.pos += self.direction
 
-
     def draw(self, screen, focus):
-        pygame.draw.line( screen, (150, 0, 0), 
-                        (int(self.pos[0]) - focus[0], int(self.pos[1]) - focus[1]), 
-                        (int(self.pos[0] - self.direction[0]) - focus[0], int(self.pos[1] - self.direction[1]) - focus[1]), 2)
+        pygame.draw.line(screen, (150, 0, 0),
+                         (int(self.pos[0]) - focus[0],
+                          int(self.pos[1]) - focus[1]),
+                         (int(self.pos[0] - self.direction[0]) - focus[0],
+                          int(self.pos[1] - self.direction[1]) - focus[1]), 2)
