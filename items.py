@@ -1,6 +1,8 @@
 import pygame
 
 from vec2d import vec2d
+from settings import CELL_SIZE
+
 
 
 class Item():

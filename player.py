@@ -11,7 +11,6 @@ class Player:
     size = 20
 
     health = 1000
-
     max_health = 1000
 
     equipped_gun = 1
@@ -40,7 +39,7 @@ class Player:
         if input_list[KEYS['D']]:
             self.direction[0] += 1
 
-    def update(self, input_list, friends, items, world_map):
+    def update(self, input_list, items, world_map):
         self.update_direction(input_list)
 
         if self.direction.get_length() and self.health > 0:

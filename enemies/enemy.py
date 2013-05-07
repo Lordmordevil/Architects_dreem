@@ -4,6 +4,8 @@ from random import uniform
 from vec2d import vec2d
 from items import Item
 from utils import collider, wall_collider
+from settings import CELL_SIZE
+
 
 
 class EnemyManager:
@@ -31,6 +33,14 @@ class EnemyManager:
                 dead_enemy = enemy
 
         if dead_enemy:
+            '''
+                Each enemy (Zombie for instance) should have a dict that contains
+                all the items that mob can drop when killed. As described bellow:
+                Type : clip
+                ID   : 1
+                Drop Chance : 10% (all values of this in the dict should be equalized to 100%)
+                Drop Count  : (3 , 5) (Drop count contains a range that indicates how many items of this kind will be dropped)
+            '''
             item_id = int(uniform(1, 3))
             if item_id - 1 in range(2):
                 items.append(Item(dead_enemy.pos, item_id))
@@ -38,6 +48,10 @@ class EnemyManager:
             world_map.data[dead_enemy.home_cell].entitys.remove(dead_enemy)
             self.npc_list.remove(dead_enemy)
             self.add(world_map)
+
+    def draw(self, screen, focus, world_map):
+        for enemy in self.npc_list:
+            enemy.draw(screen, focus, world_map)
 
 
 class Enemy:
@@ -96,5 +110,5 @@ class Enemy:
                 world_map.data[new_home_cell].entitys.append(self)
                 self.home_cell = new_home_cell
 
-        collider(self, world_map, self.size, self.npc_type)
-        wall_collider(self, world_map, self.size)
+            collider(self, world_map, self.size, self.npc_type)
+            wall_collider(self, world_map, self.size)

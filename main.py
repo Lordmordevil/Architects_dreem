@@ -59,7 +59,7 @@ class Game:
             self.clock.tick(self.fps)
 
     def update(self):
-        self.player.update(self.input_list, self.zombies.npc_list, self.items, self.world_map)
+        self.player.update(self.input_list, self.items, self.world_map)
 
         if self.player.health == 0:
             self.running = False
@@ -106,8 +106,7 @@ class Game:
         for item in self.items:
             item.draw(self.screen, self.focus, self.world_map)
 
-        for enemy in self.zombies.npc_list:
-            enemy.draw(self.screen, self.focus, self.world_map)
+        self.zombies.draw(self.screen, self.focus, self.world_map)
 
         self.player.draw(self.screen, self.mouse_pos, self.focus)
 
