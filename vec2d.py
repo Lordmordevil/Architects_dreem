@@ -248,6 +248,12 @@ class vec2d:
 
     length = property(get_length, __setlength, None, "gets or sets the magnitude of the vector")
 
+    def conv_to_iso(self):
+        x = self.x - self.y
+        y = int((self.x + self.y) / 2)
+        self.x = x
+        self.y = y
+
     def rotate(self, angle_degrees):
         radians = math.radians(angle_degrees)
         cos = math.cos(radians)

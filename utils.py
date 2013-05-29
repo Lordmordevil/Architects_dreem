@@ -2,6 +2,8 @@ from vec2d import vec2d
 from map import Wall
 from settings import CELL_SIZE
 
+def draw_to_screen(self, screen, image, pos):
+    pass
 
 def collider(obj, world_map, size, obj_type):
     object_pos = vec2d(obj.pos[0] // CELL_SIZE, obj.pos[1] // CELL_SIZE)

@@ -23,8 +23,16 @@ class MapCell:
     def draw(self, screen, focus):
         screen_pos = vec2d(int(self.pos[0] * CELL_SIZE - focus[0]), int(self.pos[1] * CELL_SIZE - focus[1]))
         alpha = 25 * self.active_light_level
+        screen_iso_pos = vec2d(screen_pos[0] - screen_pos[1], int((screen_pos[0] + screen_pos[1])/2))
+        points = (
+            (screen_iso_pos[0] + CELL_SIZE/2, screen_iso_pos[1]),
+            (screen_iso_pos[0], screen_iso_pos[1] + CELL_SIZE/2),
+            (screen_iso_pos[0] + CELL_SIZE/2, screen_iso_pos[1] + CELL_SIZE),
+            (screen_iso_pos[0] + CELL_SIZE, screen_iso_pos[1] + CELL_SIZE/2)
+            )
+        pygame.draw.polygon(screen, (alpha, alpha, alpha), points)
+        #pygame.draw.rect(screen, (alpha, alpha, alpha), (screen_iso_pos[0], screen_iso_pos[1], CELL_SIZE, CELL_SIZE))
 
-        pygame.draw.rect(screen, (alpha, alpha, alpha), (screen_pos[0], screen_pos[1], CELL_SIZE, CELL_SIZE))
         if type(self.static_content) == Wall and self.active_light_level > 0:
             self.static_content.draw(screen, focus, alpha)
 
@@ -46,9 +54,10 @@ class Wall:
     def draw(self, screen, focus, alpha):
         screen_pos = vec2d(int(self.pos[0] * CELL_SIZE + 15 - focus[0]), int(self.pos[1] * CELL_SIZE + 15 - focus[1]))
         sprite_size = self.sprite.get_size()
+        screen_iso_pos = vec2d(screen_pos[0] - screen_pos[1], int((screen_pos[0] + screen_pos[1])/2))
         screen.blit(self.sprite,
-                    (int(screen_pos[0] - sprite_size[0] // 2),
-                     int(screen_pos[1] - sprite_size[1] // 2)),
+                    (int(screen_iso_pos[0] - sprite_size[0] // 2),
+                     int(screen_iso_pos[1] - sprite_size[1] // 2)),
                     special_flags=pygame.BLEND_MULT)
 
 
